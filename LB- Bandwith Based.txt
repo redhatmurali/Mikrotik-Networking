@@ -1,0 +1,66 @@
+
+Bandwidth based Load balancing
+Why use bandwidth-based LB
++ Easily scalable 
++ Takes link status into consideration 
++ You have control over the connections 
++ You decide when the switch to second link happends (on 10mbit link, switch after 50% util.) 
+
+Mangle + bit of scripting
+
+configuration
+
+/interface ethernet 
+set 0 name=LAN 
+set 3 name=ISP_1 
+set 4 name=ISP_2 
+/ip address 
+add address=192.168.22.1/24 interface=LAN 
+add address=1.1.1.32/24 interface=ISP_1 
+add address=2.2.2.65/24 interface=ISP_2 
+/ip firewall nat 
+add action=masquerade chain=srcnat out-interface=ISP_1 
+add action=masquerade chain=srcnat out-interface=ISP_2
+
+/ip route 
+add gateway=1.1.1.1 distance=1 
+add gateway=2.2.2.1 distance=2 
+
+add gateway=1.1.1.1 routing-mark=ISP1_Route distance=1 
+add gateway=2.2.2.1 routing-mark=ISP2_Route distance=1
+/ip firewall address-list 
+add address=1.1.1.0/24 list=Connected 
+add address=2.2.2.0/24 list=Connected 
+add address=192.168.22.0/24 list=Connected 
+add address=192.168.22.0/24 list=LAN
+
+/ip firewall mangle 
+add chain=prerouting src-address-list=Connected 
+dst-address-list=Connected action=accept
+
+/ip firewall mangle 
+add chain=input connection-mark=no-mark in-interface=ISP_1
+  action=mark-connection new-connection-mark=WAN1->ROS
+
+add chain=input connection-mark=no-mark in-interface=ISP_2
+ action=mark-connection new-connection-mark=WAN2->ROS
+
+add chain=output connection-mark=WAN1->ROS
+ action=mark-routing new-routing-mark=ISP1_Route 
+
+add chain=output connection-mark=WAN2->ROS 
+ action=mark-routing new-routing-mark=ISP2_Route
+
+
+/ip firewall mangle 
+add chain=forward connection-mark=no-mark in-interface=ISP_1 
+action=mark-connection new-connection-mark=WAN1->LANs 
+add chain=forward connection-mark=no-mark in-interface=ISP_2 
+action=mark-connection new-connection-mark=WAN2->LANs 
+add chain=prerouting connection-mark=WAN1->LANs src-address-list=LAN    action=mark-routing new-routing-mark=ISP1_Route 
+add chain=prerouting connection-mark=WAN2->LANs src-address-list=LAN action=mark-routing new-routing-mark=ISP2_Route
+
+
+/ip firewall mangle 
+add chain=prerouting connection-mark=no-mark src-address-list=LAN dst-addresslist=!Connected dst-address-type=!local action=mark-connection new-connection-mark=LAN->WAN 
+add chain=prerouting connection-mark=LAN->WAN src-address-list=LAN action=mark-routing new-routing-mark=ISP1_Route comment="Load-Balancing here" 
