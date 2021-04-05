@@ -1,5 +1,5 @@
 ---
-- hosts: webservers
+- hosts: 157.90.238.13
   remote_user: root
   vars:
     http_port: 80
