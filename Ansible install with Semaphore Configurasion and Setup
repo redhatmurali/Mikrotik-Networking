@@ -45,7 +45,7 @@ yum install git
 Run AWX Installer
 
 # git clone repo
-# git clone -b 16.0.0 https://github.com/ansible/awx.git
+# git clone -b 17.0.1 https://github.com/ansible/awx.git
 git clone -b 11.2.0  https://github.com/ansible/awx.git
 # Change into repo folder
 cd awx
