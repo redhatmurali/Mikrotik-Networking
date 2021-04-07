@@ -1,0 +1,9 @@
+- hosts: routeros-1
+  remote_user: admin
+  gather_facts: no
+  connection: network_cli
+  tasks:
+
+    - name: Allow ssh only inside the private networks
+      routeros_command:
+        commands: /ip service set ssh address=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
