@@ -1,5 +1,6 @@
 ---
 ## tasks file for snmp
+- hosts: all
 - name: Enable SNMPv3
   routeros_command:
     commands:
