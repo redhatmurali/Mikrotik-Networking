@@ -1,18 +1,20 @@
 SET 1
 
 1. A network ready device is directly connected to a MikroTik RouterBOARD 750 with a correct U.T.P. RJ45 functioning cable. The device is configured with an IPv4 address of 192.168.100.70 using a subnet mask of 255.255.255.252. What will be a valid IPv4 address for the RouterBOARD 750 for a successful connection to the device?
+```bash
 a. 192.168.100.70/255.255.255.252
 b. 192.168.100.69/255.255.255.252
 c. 192.168.100.71/255.255.255.252
 d. 192.168.100.68/255.255.255.252
-
+````
 
 2. In MikroTik RouterOS, Layer-3 communication between 2 hosts can be achieved by using an address subnet of:
+```
 a. /31
 b. /29
 c. /32
 d. /30
-
+```
 3. Which computers would be able to communicate directly (without any routers involved)
 a. 192.168.17.15/29 and 192.168.17.20/28
 b. 192.168.0.5/26 and 192.168.0.100
